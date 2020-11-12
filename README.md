@@ -2,6 +2,17 @@
 
 lockdev-redirect is helper which redirects /var/lock (and /run/lock) for a given application to a known (safe) user-writable directory. This allows to make software work which expects write access to /var/lock without weakening system security by actually allowing this write access. The main target are closed-source applications which can't be easily updated to use "flock" for device locking instead of obsolete uucp device locking.
 
+Common error messages you may run into (and can be fixed with lockdev-redirect):
+
+```
+check_group_uucp(): error testing lock file creation Error details:Permission deniedcheck_lock_status: No permission to create lock file.
+please see: How can I use Lock Files with rxtx? in INSTALL
+```
+```
+Unable to create lock file for the port. Permission denied
+Error connecting to the serial port.
+```
+
 ## Compilation and installation
 
 To compile run
@@ -59,7 +70,7 @@ I want to finish this README.md with some personal thoughts about /var/lock devi
 
 There at least was one security issue where world-writable /var/lock was involved:
 https://systemd-devel.freedesktop.narkive.com/vCJLfMo2/headsup-var-lock-and-var-lock-lockdev
-I don't know if this is still an issue nowadays, but if users have write access to a directory where daemons, running as the "root" user, place their files, then this is just an security hole waiting to happen.
+I don't know if this is still an issue nowadays, but if users have write access to a directory where daemons, running as the "root" user, place their files, then this is just an security issue waiting to happen.
 
 Just remember: Debian still has /var/lock (or /run/lock) world-writable!
 
@@ -69,10 +80,10 @@ To make it even clearer how bad this "world writable lock files" idea actually i
 
 ```bash
 for file in /dev/tty*; do
-  echo "         0" > "/var/lock/LCK..$(basename $file)"
+  echo "         1" > "/var/lock/LCK..$(basename $file)"
 done
 ```
 
-What this does is create lock files for every serial device currently available on the system. It places PID "0" as the process using the device which is the system init process. This process exists for as long as the system runs. The result is that no application, using uucp locks, will access this device as they expect it to be locked by a still-running process.
+What this does is create lock files for every serial device currently available on the system. It places PID "1" as the process using the device which is the system init process. This process exists for as long as the system runs. The result is that no application, using uucp locks, will access this device as they expect it to be locked by a still-running process.
 
 The only reason why this no longer causes any harm is that (fortunately) more and more applications are updated to no longer use this kind of device locking.

@@ -134,6 +134,10 @@ bool _rewrite_path(char* destination, const char* path, const char* prefix) {
 }
 
 
+//
+// glibc functions overrides start here
+//
+
 int open(const char *file, int oflag, ...) {
   orig_open_func_type orig_func;
   orig_func = (orig_open_func_type)dlsym(RTLD_NEXT, "open");
@@ -259,6 +263,10 @@ int __xstat (int ver, const char *filename, struct stat *stat_buf) {
   return orig_func(ver, new_path, stat_buf);
 }
 
+//
+// Implementations up to this line make rxtx work properly
+//
+
 int creat(const char *file, mode_t mode) {
   orig_creat_func_type orig_func;
   orig_func = (orig_creat_func_type)dlsym(RTLD_NEXT, "creat");
@@ -337,3 +345,7 @@ int rename (const char* old, const char* new) {
 
   return orig_func(new_old, new_new);
 }
+
+//
+// Implementations up to this line make lockdev work properly
+//

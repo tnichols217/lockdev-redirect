@@ -28,6 +28,7 @@
 #include <errno.h>
 #include <linux/limits.h>
 #include <sys/stat.h>
+#include <dirent.h>
 
 /*
  Known device lock file paths:
@@ -51,6 +52,10 @@ typedef int (*orig_xstat_func_type)(int ver, const char* filename, struct stat* 
 typedef int (*orig_creat_func_type)(const char *file, mode_t mode);
 typedef int (*orig_link_func_type)(const char *from, const char *to);
 typedef int (*orig_rename_func_type)(const char *old, const char *new);
+typedef int (*orig_chmod_func_type)(const char *file, __mode_t mode);
+typedef int (*orig_scandir_func_type)(const char *__restrict dir, struct dirent ***__restrict __namelist, int (*selector) (const struct dirent *), int (*cmp) (const struct dirent **, const struct dirent **));
+typedef FILE* (*orig_fopen64_func_type)(const char* filename, const char* modes);typedef int (*orig_remove_func_type)(const char *filename);
+
 
 // First stage of path rewrite
 // Detects if the given path is below our known lock paths.
@@ -244,6 +249,7 @@ char* mktemp(char *template) {
   return template;
 }
 
+
 int __xstat (int ver, const char *filename, struct stat *stat_buf) {
   orig_xstat_func_type orig_func;
   orig_func = (orig_xstat_func_type)dlsym(RTLD_NEXT, "__xstat");
@@ -286,6 +292,7 @@ int creat(const char *file, mode_t mode) {
   return orig_func(new_path, mode);
 }
 
+
 int link(const char *from, const char *to) {
   orig_link_func_type orig_func;
   orig_func = (orig_link_func_type)dlsym(RTLD_NEXT, "link");
@@ -315,6 +322,7 @@ int link(const char *from, const char *to) {
 
   return orig_func(new_from, new_to);
 }
+
 
 int rename (const char* old, const char* new) {
   orig_rename_func_type orig_func;
@@ -348,4 +356,87 @@ int rename (const char* old, const char* new) {
 
 //
 // Implementations up to this line make lockdev work properly
+//
+
+int chmod(const char *file, __mode_t mode) {
+  orig_chmod_func_type orig_func;
+  orig_func = (orig_chmod_func_type)dlsym(RTLD_NEXT, "chmod");
+  if (orig_func == NULL) {
+    fprintf(stderr, "lockdev-redirect: CRITICAL ERROR: can't call chmod\n");
+    return -1;
+  }
+
+  const char* lockpath_prefix = _find_lockpath_prefix(file);
+  if (!lockpath_prefix)
+    return orig_func(file, mode);
+
+  char new_path[PATH_MAX];
+  if (!_rewrite_path(new_path, file, lockpath_prefix))
+    return orig_func(file, mode);
+
+  return orig_func(new_path, mode);
+}
+
+
+extern int scandir (const char *__restrict dir, struct dirent ***__restrict namelist, int (*selector) (const struct dirent *), int (*cmp) (const struct dirent **, const struct dirent **)) {
+  orig_scandir_func_type orig_func;
+  orig_func = (orig_scandir_func_type)dlsym(RTLD_NEXT, "scandir");
+  if (orig_func == NULL) {
+    fprintf(stderr, "lockdev-redirect: CRITICAL ERROR: can't call scandir\n");
+    return -1;
+  }
+
+  const char* lockpath_prefix = _find_lockpath_prefix(dir);
+  if (!lockpath_prefix)
+    return orig_func(dir, namelist, selector, cmp);
+
+  char new_path[PATH_MAX];
+  if (!_rewrite_path(new_path, dir, lockpath_prefix))
+    return orig_func(dir, namelist, selector, cmp);
+
+  return orig_func(new_path, namelist, selector, cmp);
+}
+
+
+FILE *fopen64 (const char *filename, const char *modes) {
+  orig_fopen64_func_type orig_func;
+  orig_func = (orig_fopen64_func_type)dlsym(RTLD_NEXT, "fopen64");
+  if (orig_func == NULL) {
+    fprintf(stderr, "lockdev-redirect: CRITICAL ERROR: can't call fopen64\n");
+    return NULL;
+  }
+
+  const char* lockpath_prefix = _find_lockpath_prefix(filename);
+  if (!lockpath_prefix)
+    return orig_func(filename, modes);
+
+  char new_path[PATH_MAX];
+  if (!_rewrite_path(new_path, filename, lockpath_prefix))
+    return orig_func(filename, modes);
+
+  return orig_func(new_path, modes);
+}
+
+
+int remove(const char *filename) {
+  orig_remove_func_type orig_func;
+  orig_func = (orig_remove_func_type)dlsym(RTLD_NEXT, "remove");
+  if (orig_func == NULL) {
+    fprintf(stderr, "lockdev-redirect: CRITICAL ERROR: can't call remove\n");
+    return -1;
+  }
+
+  const char* lockpath_prefix = _find_lockpath_prefix(filename);
+  if (!lockpath_prefix)
+    return orig_func(filename);
+
+  char new_path[PATH_MAX];
+  if (!_rewrite_path(new_path, filename, lockpath_prefix))
+    return orig_func(filename);
+
+  return orig_func(new_path);
+}
+
+//
+// Implementations up to this line make MATLAB libmwserialsupport.so work
 //

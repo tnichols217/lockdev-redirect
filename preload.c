@@ -238,7 +238,7 @@ char* mktemp(char *template) {
   if (!_rewrite_path(new_template, template, lockpath_prefix))
     return orig_func(template);
 
-  orig_func((char*)&new_template);
+  orig_func(new_template);
   if (new_template[0] == '\0') {
     template[0] = '\0';
     return template;

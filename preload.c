@@ -130,7 +130,7 @@ bool _rewrite_path(char* destination, const char* path, const char* prefix) {
 
   // Finally replace the found prefix in path with our created lock directory
   const char* suffix = path + strlen(prefix);
-  n = snprintf(destination, PATH_MAX, "%s/%s", lock_dir, suffix);
+  n = snprintf(destination, PATH_MAX, "%s%s", lock_dir, suffix);
   if (n < 0 || n >= PATH_MAX)
     return false;
 

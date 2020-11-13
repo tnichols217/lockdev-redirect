@@ -244,6 +244,8 @@ char* mktemp(char *template) {
     return template;
   }
 
+  // If we successfully made a unique temporary filename for your own target
+  // path, then integrate its last six characters into the original template
   char* last_six = new_template + strlen(new_template) - 6;
   strcpy(template + strlen(template) - 6, last_six);
   return template;

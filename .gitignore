@@ -1,0 +1,5 @@
+*.o
+*.so
+
+tests/lockdev/sample
+tests/rxtx/testrun

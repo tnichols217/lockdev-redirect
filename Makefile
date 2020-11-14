@@ -17,7 +17,7 @@ lockdev-redirect.so: $(OBJS)
 	$(CC) -shared $(OBJS) -o lockdev-redirect.so -ldl $(LDFLAGS)
 
 install:
-	install -D -m 644 lockdev-redirect.so $(DESTDIR)$(LIBDIR)/lockdev-redirect.so
+	install -D -m 755 lockdev-redirect.so $(DESTDIR)$(LIBDIR)/lockdev-redirect.so
 	install -D -m 755 lockdev-redirect $(DESTDIR)$(BINDIR)/lockdev-redirect
 
 test:

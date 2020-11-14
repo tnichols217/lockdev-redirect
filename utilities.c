@@ -44,7 +44,7 @@ char* LOCK_PATHS[] = {
 // Prameters:
 //   path: The path to check
 // Return value: Lock path prefix on match. NULL otherwise.
-char* _find_lockpath_prefix(const char* path) {
+__attribute__ ((visibility ("hidden"))) char* _find_lockpath_prefix(const char* path) {
   size_t pathlen = strlen(path);
   unsigned char index = 0;
 
@@ -79,7 +79,7 @@ char* _find_lockpath_prefix(const char* path) {
 //   path: The path to rewrite
 //   prefix: The already determined lock path prefix in the given path
 // Return value: true if rewrite succeeded. false otherwise.
-bool _rewrite_path(char* destination, const char* path, const char* prefix) {
+__attribute__ ((visibility ("hidden"))) bool _rewrite_path(char* destination, const char* path, const char* prefix) {
   // We need XDG_RUNTIME_DIR to be set as this is where we move lock files to
   char* runtime_dir = getenv("XDG_RUNTIME_DIR");
   if (!runtime_dir) {

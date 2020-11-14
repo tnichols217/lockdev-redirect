@@ -1,5 +1,17 @@
 #!/bin/sh
 
+if [ "$1" = '--version' ]; then
+  echo 'lockdev-redirect version 1.0.0'
+  exit 0
+fi
+
+if [ "$1" = '--help' ]; then
+  echo 'lockdev-redirect, redirect /var/lock to a user-writable path.'
+  echo 'Usage: lockdev-redirect COMMAND'
+  echo 'Where COMMAND is the command to execute with redirected /var/lock'
+  exit 0
+fi
+
 export LD_PRELOAD=$LD_PRELOAD:/usr/lib/lockdev-redirect.so
 
 exec $*

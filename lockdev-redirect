@@ -12,6 +12,5 @@ if [ "$1" = '--help' ]; then
   exit 0
 fi
 
-export LD_PRELOAD=$LD_PRELOAD:/usr/lib/lockdev-redirect.so
-
+export LD_PRELOAD=$LD_PRELOAD:lockdev-redirect.so
 exec $*

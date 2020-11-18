@@ -47,15 +47,25 @@ This runs some actual device locking routines that are used by existing librarie
 
 ## Reporting errors
 
-It may be possible that you still run into errors with some applications. The redirect only has been implemented for glibc functions that are used by known uucp lock implementations. The /var/lock path is actually very specialized. Noone will (and should) ever write documents or other stuff to there! Only locking mechanisms should ever access this path!
+It may be possible that you still run into errors with some applications. The redirect only has been implemented for glibc functions that are used by known uucp lock implementations.
 If you run into errors, then please provide the following in your issue report:
 
  - Name of the application you wanted to run with lockdev-redirect
  - Library used for device access or device locking (if known)
- - Download path or website
+ - Download path or website so I can get this application
  - If this application is not commonly available, you also have to bring some time to help with debugging
 
-## My suggestion to developers
+## Please read before attempting to add new overrides
+
+The path /var/lock, that we want to redirect, is a very special path which should only be used by device locking mechanisms. What these mechanisms do is actually pretty limited so we don't have to provide a nearly perfect "virtual mount" of the new lock path to /var/lock but a subset of the functions actually used by locking mechanisms is perfectly fine for our usecase. Sometimes less is more!
+
+So please:
+
+ - Don't start to try to add as many function overrides as possible! We don't want everything but the kitchen sink in there!
+ - Only attempt to override more functions if you can provide a real-world example where this is actually needed to make a new device-locking mechanism work.
+ - Always keep in mind that we need a working testcase for every new override. Best case this would be code from the actual application (if it is open source).
+
+## My suggestion to application developers
 
 lockdev-redirect is meant as a helper for the **end user only** and is not meant to be used as a replacement of implementing proper (up-to-date) device locking. So I strongly suggest against delivering lockdev-redirect bundled with closed source applications. The up-to-date replacement for uucp lock files is using "[flock](https://linux.die.net/man/2/flock)" on the open file descriptor of the device. You can find some additional information about this in the following Debian bug report, where they deprecate their own uucp lock helper library:
 https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=734086

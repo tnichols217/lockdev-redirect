@@ -27,5 +27,8 @@ clean:
 	rm -f lockdev-redirect.so
 	rm -f *.o
 
+	rm -rf pkg src
+	rm -f lockdev-redirect-*.pkg.tar.xz
+
 	cd tests/rxtx && $(MAKE) clean
 	cd tests/lockdev && $(MAKE) clean

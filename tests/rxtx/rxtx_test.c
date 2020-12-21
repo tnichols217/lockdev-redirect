@@ -2,7 +2,7 @@
 // always a good thing. So I've copied some parts of rxtx to here to allow us
 // to do some "fake locking" with "make test" to verify our preload does its job
 //
-// Sidenote: Yes, this is over 300 lines of code just for locking a device...
+// Sidenote: Yes, this is over 400 lines of code just for locking a device...
 
 #define DEVICEDIR "/dev/"
 #define LOCKDIR "/var/lock"

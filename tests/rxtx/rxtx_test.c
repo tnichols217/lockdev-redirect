@@ -7,7 +7,7 @@
 #define DEVICEDIR "/dev/"
 #define LOCKDIR "/var/lock"
 #define LOCKFILEPREFIX "LCK.."
-#define UNEXPECTED_LOCK_FILE "RXTX Error:  Unexpected lock file: %s\n Please report to the RXTX developers\n"
+#define UNEXPECTED_LOCK_FILE "RXTX Error:  Unexpected lock file: %s\n"
 
 #include <stdio.h>
 #include <string.h>

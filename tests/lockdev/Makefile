@@ -13,11 +13,11 @@ sample: $(OBJS)
 
 test: all
 	@echo Testing lock on /dev/ttyS3
-	@./sample -l /dev/ttyS3 && echo "PASSED"
+	@./sample -l /dev/ttyS3 && echo "PASS"
 	@echo Testing relock on /dev/ttyS3
-	@./sample -r /dev/ttyS3 && echo "PASSED"
+	@./sample -r /dev/ttyS3 && echo "PASS"
 	@echo Testing unlock on /dev/ttyS3
-	@./sample -u /dev/ttyS3 && echo "PASSED"
+	@./sample -u /dev/ttyS3 && echo "PASS"
 
 clean:
 	rm -f *.o

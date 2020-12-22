@@ -2,6 +2,9 @@
 
 set -e
 
+TESTS="tests/rxtx tests/lockdev tests/custom"
+
+
 # If we run as "root", then we have write access to /var/lock even without
 # lockdev-redirect working as expected --> Tests are useless
 if [ $(id -u) -eq 0 ]; then
@@ -21,20 +24,16 @@ if touch "$TESTFILE"; then
   exit 1
 fi
 
+# Build all tests
+for testdir in $TESTS; do make -C "$testdir"; done
+
+
 # Now export LD_PRELOAD with our library
 export LD_PRELOAD=$PWD/lockdev-redirect.so
 
-# Call RXTX library test
-cd tests/rxtx
-make
-make test
-cd -
+# Run all tests
+for testdir in $TESTS; do make -C "$testdir" test; done
 
-# Call liblockdev test
-cd tests/lockdev
-make
-make test
-cd -
 
 # Some generic success message
 echo

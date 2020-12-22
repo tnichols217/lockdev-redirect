@@ -3,3 +3,4 @@
 
 tests/lockdev/sample
 tests/rxtx/testrun
+tests/custom/testrun

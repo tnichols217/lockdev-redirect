@@ -21,7 +21,7 @@ install:
 	install -D -m 755 lockdev-redirect $(DESTDIR)$(BINDIR)/lockdev-redirect
 
 test: all
-	./full-testrun.sh
+	@cd tests; ./full-testrun.sh
 
 clean:
 	rm -f lockdev-redirect.so

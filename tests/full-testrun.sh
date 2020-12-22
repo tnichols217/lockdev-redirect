@@ -2,7 +2,7 @@
 
 set -e
 
-TESTS="tests/rxtx tests/lockdev tests/custom"
+TESTS="rxtx lockdev custom"
 
 
 # If we run as "root", then we have write access to /var/lock even without
@@ -29,7 +29,7 @@ for testdir in $TESTS; do make -C "$testdir"; done
 
 
 # Now export LD_PRELOAD with our library
-export LD_PRELOAD=$PWD/lockdev-redirect.so
+export LD_PRELOAD=$PWD/../lockdev-redirect.so
 
 # Run all tests
 for testdir in $TESTS; do make -C "$testdir" test; done

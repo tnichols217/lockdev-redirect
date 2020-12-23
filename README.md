@@ -1,11 +1,13 @@
 # lockdev-redirect
 
-lockdev-redirect is helper which redirects /var/lock (and /run/lock) for a given application to a known (safe) user-writable directory. This allows to make software work which expects write access to /var/lock without weakening system security by actually allowing this write access. The main target are closed-source applications which can't be easily updated to use "flock" for device locking instead of obsolete uucp device locking.
+lockdev-redirect is helper which redirects /var/lock (and /run/lock) for a given application to a (safe) user-writable directory below $XDG_RUNTIME_DIR. This allows to make software work which expects write access to /var/lock without weakening system security by actually allowing this write access. The main target are closed-source applications which can't be easily updated to use "flock" for device locking instead of obsolete uucp device locking.
 
 Common error messages you may run into (and can be fixed with lockdev-redirect):
 
 ```
-check_group_uucp(): error testing lock file creation Error details:Permission deniedcheck_lock_status: No permission to create lock file.
+check_group_uucp(): error testing lock file creation
+Error details:Permission denied
+check_lock_status: No permission to create lock file.
 please see: How can I use Lock Files with rxtx? in INSTALL
 ```
 ```

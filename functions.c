@@ -75,7 +75,7 @@ int open(const char *file, int oflag, ...) {
   if (_rewrite_path(buffer, file, lockpath_prefix))
     new_path = buffer;
 
-  if (__OPEN_NEEDS_MODE(O_CREAT)) {
+  if (__OPEN_NEEDS_MODE(oflag)) {
     va_list args;
     va_start(args, oflag);
     int mode = va_arg(args, int);
